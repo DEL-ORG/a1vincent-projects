@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-every-minute
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup
+            image: devopseasylearning/a1vincent-backup:001
+            # Add any additional container specifications here
+          restartPolicy: OnFailure
+

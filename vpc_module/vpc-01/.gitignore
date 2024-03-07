@@ -23,6 +23,7 @@ backend/.idea/*
 # .tfstate files
 *.tfstate
 *.tfstate.*
+.terraform.lock.hcl
 
 *.terragrunt.*
 .terragrunt-cache

@@ -1,11 +1,11 @@
 resource "aws_rds_cluster" "a1vincent_postgresql_cluster" {
-  cluster_identifier              = "aurora-cluster-prosgresql"
-  engine                          = "aurora-postgresql"
-  engine_version                  = "11"
-  availability_zones              = var.availability_zones
-  database_name                   = "a1vincent_db"
-  master_username                 = "adminuser"
-  master_password                 = "password"
+  cluster_identifier = "aurora-cluster-prosgresql"
+  engine             = "aurora-postgresql"
+  engine_version     = "11"
+  availability_zones = var.availability_zones
+  database_name      = "a1vincent_db"
+  # master_username                 = "adminuser"
+  # master_password                 = var.db_master_password # Use input variable here
   backup_retention_period         = 0
   preferred_backup_window         = "07:00-09:00"
   deletion_protection             = false

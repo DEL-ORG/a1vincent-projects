@@ -37,3 +37,10 @@ variable "availability_zones" {
   default = ["us-east-1b", "us-east-1d"]
 }
 
+#variable "db_master_password" {
+#  description = "The master password for the RDS cluster"
+#  type        = string
+#  sensitive   = true
+# You can set a default value if needed
+# default     = "defaultpassword"
+#}

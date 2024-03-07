@@ -14,7 +14,7 @@ backend/.idea/*
 */**/hidden.txt
 */**/hidden.md
 */**/.terraform
-# */**/.terraform.lock.hcl
+ */**/.terraform.lock.hcl
 
 
 # Local .terraform directories
@@ -23,7 +23,7 @@ backend/.idea/*
 # .tfstate files
 *.tfstate
 *.tfstate.*
-.terraform.lock.hcl
+
 
 *.terragrunt.*
 .terragrunt-cache

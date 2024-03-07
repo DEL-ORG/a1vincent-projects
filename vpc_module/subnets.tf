@@ -5,7 +5,7 @@ resource "aws_subnet" "vincent_private_subnet" {
   availability_zone = element(var.availability_zone, count.index)
 
   tags = merge(var.tags, {
-    Name = format("%s-%s-%s-private-subnet-%d", var.tags["id"], var.tags["environment"], var.tags["project"], count.index + 1)
+    Name = format("%s-private-subnet-%d", var.tags["id"], count.index + 1)
   })
 }
 
@@ -17,6 +17,6 @@ resource "aws_subnet" "vincent_public_subnet" {
   map_public_ip_on_launch = true
 
   tags = merge(var.tags, {
-    Name = format("%s-%s-%s-public-subnet-%d", var.tags["id"], var.tags["environment"], var.tags["project"], count.index + 1)
+    Name = format("%s-public-subnet-%d", var.tags["id"], count.index + 1)
   })
 }

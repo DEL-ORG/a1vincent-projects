@@ -13,21 +13,3 @@ resource "aws_s3_bucket_versioning" "main-backend" {
   }
 }
 
-# resource "aws_s3_bucket" "source" {
-#   provider = aws.central
-#   bucket   = "tf-test-bucket-source-12345"
-# }
-
-# resource "aws_s3_bucket_acl" "source_bucket_acl" {
-#   provider = aws.central
-#   bucket   = aws_s3_bucket.source.id
-#   acl      = "private"
-# }
-
-# resource "aws_s3_bucket_versioning" "source" {
-#   provider = aws.central
-#   bucket   = aws_s3_bucket.source.id
-#   versioning_configuration {
-#     status = "Enabled"
-#   }
-# }

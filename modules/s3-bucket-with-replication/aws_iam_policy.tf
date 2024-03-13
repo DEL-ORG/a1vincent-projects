@@ -33,7 +33,7 @@ data "aws_iam_policy_document" "replication" {
 
     actions = [
       "s3:ReplicateObject",
-      "s3:ReplicateDelete",
+      # "s3:ReplicateDelete",
       "s3:ReplicateTags",
       "s3:ReplicateObjectTagging"
     ]

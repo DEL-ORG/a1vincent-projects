@@ -48,7 +48,7 @@ resource "aws_eks_cluster" "a1vincent_eks_cluster" {
   role_arn = aws_iam_role.a1vincent_eks_cluster_role.arn
 
   # Desired Kubernetes master version
-  version = "1.25"
+  version = "1.27"
 
   vpc_config {
     # Indicates whether or not the Amazon EKS private API server endpoint is enabled

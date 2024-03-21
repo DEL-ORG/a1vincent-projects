@@ -5,7 +5,7 @@ variable "aws_region" {
 
 variable "name" {
   type    = string
-  default = "eks-node-groups"
+  default = "eks-cluster"
 }
 
 variable "tags" {
@@ -15,7 +15,7 @@ variable "tags" {
     "owner"          = "a1vincent"
     "teams"          = "practical"
     "environment"    = "dev"
-    "project"        = "eks-node-groups"
+    "project"        = "eks"
     "create_by"      = "Terraform"
     "cloud_provider" = "aws"
   }

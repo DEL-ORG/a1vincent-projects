@@ -21,7 +21,7 @@ variable "eks-cluster" {
 
 variable "eks-cluster-version" {
   type    = string
-  default = "1.27"
+  default = "1.28"
 }
 
 variable "endpoint_private_access" {
@@ -33,6 +33,13 @@ variable "endpoint_public_access" {
   type    = bool
   default = true
 }
+
+variable "subnet_ids" {
+  type        = list(string)
+  default     = [""]
+  description = "list of public subnet IDs"
+}
+
 
 variable "tags" {
   type = map(any)
@@ -47,9 +54,4 @@ variable "tags" {
   }
 }
 
-variable "subnet_ids" {
-  type        = list(string)
-  default     = [""]
-  description = "list of public subnet IDs"
-}
 

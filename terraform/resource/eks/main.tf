@@ -41,39 +41,6 @@ resource "aws_eks_cluster" "eks-cluster" {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # resource "aws_iam_role" "master" {
 #   name = format("%s-master", var.tags["project"]) # The name of the role
 

@@ -2,9 +2,9 @@
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role
 
 # Create IAM role for EKS Node Group
-resource "aws_iam_role" "a1vincent_nodes_general_role" {
+resource "aws_iam_role" "nodes_general" {
   # The name of the role
-  name = format("%s-a1vincent_eks_node-group-general", var.tags["project"])
+  name = "eks-node-group-general"
 
   # The policy that grants an entity permission to assume the role.
   assume_role_policy = <<POLICY
@@ -26,13 +26,13 @@ POLICY
 # Resource: aws_iam_role_policy_attachment
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment
 
-resource "aws_iam_role_policy_attachment" "a1vincent_eks_worker_node_policy_general_attachment" {
+resource "aws_iam_role_policy_attachment" "amazon_eks_worker_node_policy_general" {
   # The ARN of the policy you want to apply.
   # https://github.com/SummitRoute/aws_managed_policies/blob/master/policies/AmazonEKSWorkerNodePolicy
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
 
   # The role the policy should be applied to
-  role = aws_iam_role.a1vincent_nodes_general_role.name
+  role = aws_iam_role.nodes_general.name
 }
 
 resource "aws_iam_role_policy_attachment" "amazon_eks_cni_policy_general" {
@@ -41,7 +41,7 @@ resource "aws_iam_role_policy_attachment" "amazon_eks_cni_policy_general" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
 
   # The role the policy should be applied to
-  role = aws_iam_role.a1vincent_nodes_general_role.name
+  role = aws_iam_role.nodes_general.name
 }
 
 resource "aws_iam_role_policy_attachment" "amazon_ec2_container_registry_read_only" {
@@ -50,28 +50,29 @@ resource "aws_iam_role_policy_attachment" "amazon_ec2_container_registry_read_on
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 
   # The role the policy should be applied to
-  role = aws_iam_role.a1vincent_nodes_general_role.name
+  role = aws_iam_role.nodes_general.name
 }
 
 # Resource: aws_eks_node_group
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_node_group
 
-resource "aws_eks_node_group" "a1vincent_nodes_general" {
+resource "aws_eks_node_group" "nodes_general" {
   # Name of the EKS Cluster.
-  cluster_name = aws_eks_cluster.a1vincent_eks_cluster.name
+  cluster_name = aws_eks_cluster.eks.name
 
   # Name of the EKS Node Group.
-  node_group_name = "a1vincent_nodes-general"
+  node_group_name = "nodes-general"
 
   # Amazon Resource Name (ARN) of the IAM Role that provides permissions for the EKS Node Group.
-  node_role_arn = aws_iam_role.a1vincent_nodes_general_role.arn
+  node_role_arn = aws_iam_role.nodes_general.arn
 
   # Identifiers of EC2 Subnets to associate with the EKS Node Group. 
   # These subnets must have the following resource tag: kubernetes.io/cluster/CLUSTER_NAME 
   # (where CLUSTER_NAME is replaced with the name of the EKS Cluster).
-  subnet_ids = concat(var.public_subnet_ids, var.private_subnet_ids)
-
-
+  subnet_ids = [
+    aws_subnet.private_1.id,
+    aws_subnet.private_2.id
+  ]
 
   # Configuration block with scaling settings
   scaling_config {
@@ -107,7 +108,7 @@ resource "aws_eks_node_group" "a1vincent_nodes_general" {
   }
 
   # Kubernetes version
-  version = "1.27"
+  version = "1.20"
 
   # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.
   # Otherwise, EKS will not be able to properly delete EC2 Instances and Elastic Network Interfaces.

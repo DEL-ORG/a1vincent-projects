@@ -1,0 +1,191 @@
+---
+# Source: a1vincent-espresso-shop-reviews/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: espresso-shop-reviews
+  labels:
+    helm.sh/chart: a1vincent-espresso-shop-reviews-0.1.0
+    app.kubernetes.io/name: a1vincent-espresso-shop-reviews
+    app.kubernetes.io/instance: reviews
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: a1vincent-espresso-shop-reviews/templates/serviceaccount_2.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: espresso-shop-sa2
+  labels:
+    helm.sh/chart: a1vincent-espresso-shop-reviews-0.1.0
+    app.kubernetes.io/name: a1vincent-espresso-shop-reviews
+    app.kubernetes.io/instance: reviews
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: a1vincent-espresso-shop-reviews/templates/cm.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: espresso-shop-reviews-1
+data:
+   SERVICE_VERSION: v1
+   POSTGRES_USER: postgres
+   POSTGRES_DB: angel
+   POSTGRES_HOST: postgres-postgresql-ha-postgresql
+---
+# Source: a1vincent-espresso-shop-reviews/templates/cm_2.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: espresso-shop-reviews-2
+data:
+   SERVICE_VERSION: v2
+   POSTGRES_USER: postgres
+   POSTGRES_DB: angel
+   POSTGRES_HOST: postgres-postgresql-ha-postgresql
+---
+# Source: a1vincent-espresso-shop-reviews/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: espresso-shop-reviews-svc
+  labels:
+    helm.sh/chart: a1vincent-espresso-shop-reviews-0.1.0
+    app.kubernetes.io/name: a1vincent-espresso-shop-reviews
+    app.kubernetes.io/instance: reviews
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: NodePort
+  ports:
+    - port: 8092
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: a1vincent-espresso-shop-reviews
+    app.kubernetes.io/instance: reviews
+    app.kubernetes.io/name: a1vincent-espresso-shop-reviews
+    app.kubernetes.io/instance: reviews
+---
+# Source: a1vincent-espresso-shop-reviews/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: espresso-shop-review-1
+  labels:
+    helm.sh/chart: a1vincent-espresso-shop-reviews-0.1.0
+    app.kubernetes.io/name: a1vincent-espresso-shop-reviews
+    app.kubernetes.io/instance: reviews
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: a1vincent-espresso-shop-reviews
+      app.kubernetes.io/instance: reviews
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: a1vincent-espresso-shop-reviews
+        app.kubernetes.io/instance: reviews
+    spec:
+      serviceAccountName: reviews-a1vincent-espresso-shop-reviews
+      securityContext:
+        {}
+      containers:
+        - name: a1vincent-espresso-shop-reviews
+          securityContext:
+            {}
+          image: "devopseasylearning/a1vincent-shop-reviews:v1.0.0"
+          imagePullPolicy: Always
+          env:
+          - name: SERVICE_VERSION
+            value: V1
+          # envFrom:
+          # - configMapRef:
+          #    name: espresso-shop-reviews-1
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+---
+# Source: a1vincent-espresso-shop-reviews/templates/deployment_2.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: espresso-shop-review-2
+  labels:
+    helm.sh/chart: a1vincent-espresso-shop-reviews-0.1.0
+    app.kubernetes.io/name: a1vincent-espresso-shop-reviews
+    app.kubernetes.io/instance: reviews
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: a1vincent-espresso-shop-reviews
+      app.kubernetes.io/instance: reviews
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: a1vincent-espresso-shop-reviews
+        app.kubernetes.io/instance: reviews
+    spec:
+      serviceAccountName: reviews-a1vincent-espresso-shop-reviews
+      securityContext:
+        {}
+      containers:
+        - name: a1vincent-espresso-shop-reviews
+          securityContext:
+            {}
+          image: "devopseasylearning/a1vincent-shop-reviews:v1.0.0"
+          imagePullPolicy: Always
+          env:
+          - name: SERVICE_VERSION
+            value: V2
+          # envFrom:
+          # - configMapRef:
+          #    name: 
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP     
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+---
+# Source: a1vincent-espresso-shop-reviews/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "reviews-a1vincent-espresso-shop-reviews-test-connection"
+  labels:
+    helm.sh/chart: a1vincent-espresso-shop-reviews-0.1.0
+    app.kubernetes.io/name: a1vincent-espresso-shop-reviews
+    app.kubernetes.io/instance: reviews
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['reviews-a1vincent-espresso-shop-reviews:8092']
+  restartPolicy: Never

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.configmap.name02 }}
+data:
+   SERVICE_VERSION: v2
+   POSTGRES_USER: postgres
+   POSTGRES_DB: angel
+   POSTGRES_HOST: postgres-postgresql-ha-postgresql

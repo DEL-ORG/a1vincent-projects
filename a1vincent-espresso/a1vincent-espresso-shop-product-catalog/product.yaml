@@ -1,0 +1,136 @@
+---
+# Source: a1vincent-espresso-shop-product-catalog/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: product-catalog-a1vincent-espresso-shop-product-catalog
+  labels:
+    helm.sh/chart: a1vincent-espresso-shop-product-catalog-0.1.0
+    app.kubernetes.io/name: a1vincent-espresso-shop-product-catalog
+    app.kubernetes.io/instance: product-catalog
+    version: v1
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+automountServiceAccountToken: true
+---
+# Source: a1vincent-espresso-shop-product-catalog/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-catalog-a1vincent-espresso-shop-product-catalog
+  labels:
+    helm.sh/chart: a1vincent-espresso-shop-product-catalog-0.1.0
+    app.kubernetes.io/name: a1vincent-espresso-shop-product-catalog
+    app.kubernetes.io/instance: product-catalog
+    version: v1
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: NodePort
+  ports:
+    - port: 8091
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: a1vincent-espresso-shop-product-catalog
+    app.kubernetes.io/instance: product-catalog
+    version: v1
+---
+# Source: a1vincent-espresso-shop-product-catalog/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-catalog-a1vincent-espresso-shop-product-catalog
+  labels:
+    helm.sh/chart: a1vincent-espresso-shop-product-catalog-0.1.0
+    app.kubernetes.io/name: a1vincent-espresso-shop-product-catalog
+    app.kubernetes.io/instance: product-catalog
+    version: v1
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: a1vincent-espresso-shop-product-catalog
+      app.kubernetes.io/instance: product-catalog
+      version: v1
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: a1vincent-espresso-shop-product-catalog-0.1.0
+        app.kubernetes.io/name: a1vincent-espresso-shop-product-catalog
+        app.kubernetes.io/instance: product-catalog
+        version: v1
+        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/managed-by: Helm
+    spec:
+      serviceAccountName: product-catalog-a1vincent-espresso-shop-product-catalog
+      securityContext:
+        {}
+      containers:
+        - name: a1vincent-espresso-shop-product-catalog
+          securityContext:
+            {}
+          image: "devopseasylearning/a1vincent-espresso-shop-product-catalog:v1.0.0"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+---
+# Source: a1vincent-espresso-shop-product-catalog/templates/hpa.yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: product-catalog-a1vincent-espresso-shop-product-catalog
+  labels:
+    helm.sh/chart: a1vincent-espresso-shop-product-catalog-0.1.0
+    app.kubernetes.io/name: a1vincent-espresso-shop-product-catalog
+    app.kubernetes.io/instance: product-catalog
+    version: v1
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: product-catalog-a1vincent-espresso-shop-product-catalog
+  minReplicas: 1
+  maxReplicas: 100
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
+---
+# Source: a1vincent-espresso-shop-product-catalog/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "product-catalog-a1vincent-espresso-shop-product-catalog-test-connection"
+  labels:
+    helm.sh/chart: a1vincent-espresso-shop-product-catalog-0.1.0
+    app.kubernetes.io/name: a1vincent-espresso-shop-product-catalog
+    app.kubernetes.io/instance: product-catalog
+    version: v1
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['product-catalog-a1vincent-espresso-shop-product-catalog:8091']
+  restartPolicy: Never

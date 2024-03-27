@@ -19,7 +19,7 @@ variable "tags" {
     "owner"          = "a1vincent"
     "teams"          = "PD"
     "environment"    = "dev"
-    "project"        = "VPC"
+    "project"        = "secret-manager"
     "create_by"      = "Terraform"
     "cloud_provider" = "aws"
   }

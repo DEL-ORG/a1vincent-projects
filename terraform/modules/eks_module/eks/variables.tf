@@ -33,16 +33,6 @@ variable "endpoint_public_access" {
   default = true
 }
 
-# variable "aws_iam_role_name" {
-#   type    = string
-#   default = "eks_iam_role"
-# }
-
-# variable "name" {
-#   type    = string
-#   default = "eks-node-groups"
-# }
-
 variable "desired_size" {
   type    = number
   default = 2
@@ -121,7 +111,15 @@ variable "subnet_ids" {
   description = "list of public subnet IDs"
 }
 
+# variable "aws_iam_role_name" {
+#   type    = string
+#   default = "eks_iam_role"
+# }
 
+# variable "name" {
+#   type    = string
+#   default = "eks-node-groups"
+# }
 
 
 

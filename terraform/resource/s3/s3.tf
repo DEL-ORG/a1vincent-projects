@@ -27,17 +27,26 @@ locals {
     special = false
     upper   = false
     numeric = true
-}
+  }
 
-s3_versioning = "Enabled"
+  s3_versioning = "Enabled"
 
 }
 
 module "vpc" {
   //source = "../../modules/s3-module"
-  source = "git@github.com:DEL-ORG/a1vincent-projects.git//terraform/modules/s3-module?ref=main"
-  region = local.region
-  random_s3 = local.random_s3 
+  source        = "git@github.com:DEL-ORG/a1vincent-projects.git//terraform/modules/s3-module?ref=main"
+  region        = local.region
+  random_s3     = local.random_s3
   s3_versioning = local.s3_versioning
 
+}
+
+terraform {
+  backend "s3" {
+    bucket         = "2024-dev-tf-state"
+    dynamodb_table = "2024-dev-tf-state-lock"
+    key            = "s3-backend"
+    region         = "us-east-1"
+  }
 }

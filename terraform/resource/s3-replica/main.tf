@@ -39,5 +39,11 @@ module "s3_backend" {
   tags   = local.tags
 }
 
-
-
+terraform {
+  backend "s3" {
+    bucket         = "2024-dev-tf-state"
+    dynamodb_table = "2024-dev-tf-state-lock"
+    key            = "s3-backend-replica"
+    region         = "us-east-1"
+  }
+}

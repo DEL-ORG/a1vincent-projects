@@ -14,7 +14,7 @@ variable "availability_zones" {
   default = [
     "us-east-1a",
     "us-east-1b",
-    "us-east-1c",
+    "us-east-1c"
   ]
 }
 
@@ -46,3 +46,9 @@ variable "environment" {
   default = "prod"
 }
 
+variable "aws_nat_gateway" {
+  type    = string
+  default = "1"
+
+
+}

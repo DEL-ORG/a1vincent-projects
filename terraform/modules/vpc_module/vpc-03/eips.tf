@@ -1,6 +1,7 @@
 # Create Elastic IPs
 resource "aws_eip" "vincent_eip" {
-  count = local.num_nat_gateways
+  # count = local.num_nat_gateways
+  count = var.aws_nat_gateway
   vpc   = true
   # domain = "vpc"
 

@@ -16,6 +16,7 @@ remote_state {
     region         = "us-east-1"
     encrypt        = true
     dynamodb_table = "${local.common.assetid}-${local.common.environment}-${local.common.project}-tf-state-lock"
+    # dynamodb_table = "${local.common.assetid}-${local.common.environment}-tf-state-lock"
   }
 }
 

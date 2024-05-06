@@ -6,11 +6,11 @@ variable "aws_region" {
 variable "tags" {
   type = map(any)
   default = {
-    "id"             = "2025"
+    "id"             = "2024"
     "owner"          = "a1vincent"
     "teams"          = "PD"
     "environment"    = "dev"
-    "project"        = "bastion-host"
+    "project"        = "ec2-private"
     "create_by"      = "Terraform"
     "cloud_provider" = "aws"
   }

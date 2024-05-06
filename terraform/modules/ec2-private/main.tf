@@ -1,89 +1,56 @@
-terraform {
-  required_version = "~> 1.0.0"
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.0"
-    }
-  }
-}
-
-provider "aws" {
-  region = local.aws_region
-}
-
-terraform {
-  backend "s3" {
-    bucket         = "2024-dev-tf-state"
-    dynamodb_table = "2024-dev-tf-state-lock"
-    key            = "ec2private"
-    region         = "us-east-1"
-  }
-}
-
-locals {
-  aws_region             = "us-east-1"
-  ami                    = "ami-080e1f13689e07408"
-  instance_type          = "t2.micro"
-  key_name               = "terraform-aws"
-  vpc_security_group_ids = ["sg-032ff37a7c0e750ae"]
-  subnet_id              = "subnet-04644a5b655942053"
-  volume_size            = "10"
-
-  tags = {
-    Name = "ec2-private"
-
-  }
-}
-
-# create the AWS instance using the local variable
+# Create EC2 private instance
 resource "aws_instance" "ec2-private" {
+  ami                    = "ami-07d9b9ddc6cd8dd30"                # Update with your desired AMI ID
+  instance_type          = "t2.micro"                             # Update with your desired instance type
+  key_name               = "jenkins-master"                       # Update with your key pair name
+  subnet_id              = aws_subnet.vincent_public_subnet[0].id # Update with your subnet ID
+  vpc_security_group_ids = [aws_security_group.ec2-private-sg.id]
 
-  ami                    = local.ami
-  instance_type          = local.instance_type
-  key_name               = local.key_name
-  vpc_security_group_ids = local.vpc_security_group_ids
-  subnet_id              = local.subnet_id
+  tags = merge(var.tags, {
+    Name = format("%s-%s-ec2-private", var.tags["id"], var.tags["environment"])
+  })
 
-  root_block_device {
-    volume_size = local.volume_size
-  }
-
-  tags = local.tags
+  associate_public_ip_address = true # Associate a public IP address
 }
 
-# tags = {
-#   "id"             = "2024"
-#   "owner"          = "a1vincent"
-#   "teams"          = "PD"
-#   "environment"    = "dev"
-#   "project"        = "ec2-private"
-#   "create_by"      = "Terraform"
-#   "cloud_provider" = "aws"
-# }
 
-provider "aws" {
-  region = local.aws_region
-}
 
-terraform {
-  required_version = ">= 1.0.0"
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.0"
-    }
-  }
-}
 
-# terraform {
-#   backend "s3" {
-#     bucket         = ""
-#     dynamodb_table = ""
-#     key            = ""
-#     region         = ""
+# locals {
+#   aws_region             = "us-east-1"
+#   ami                    = "ami-080e1f13689e07408"
+#   instance_type          = "t2.micro"
+#   key_name               = "terraform-aws"
+#   vpc_security_group_ids = ["sg-032ff37a7c0e750ae"]
+#   subnet_id              = "subnet-04644a5b655942053"
+#   volume_size            = "10" # this should be at least 30 for windows and 8 for linux
+#   instance_count                = 1
+#   enable_termination_protection = false
+
+#   tags = {
+#     Name = "ec2-private"
+
 #   }
 # }
+
+# # create the AWS instance using the local variable
+# resource "aws_instance" "ec2-private" {
+
+#   ami                    = local.ami
+#   instance_type          = local.instance_type
+#   key_name               = local.key_name
+#   vpc_security_group_ids = local.vpc_security_group_ids
+#   subnet_id              = local.subnet_id
+
+#   root_block_device {
+#     volume_size = local.volume_size
+#   }
+
+#   tags = local.tags
+# }
+
+
+
 
 # locals {
 #   aws_region                    = "us-east-1"

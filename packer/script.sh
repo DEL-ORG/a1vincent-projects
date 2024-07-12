@@ -90,7 +90,7 @@ function apt_software {
     ## Install Gradle
     ## https://gradle.org/releases/
     GRADLE_VERSION="4.10"
-    sudo apt install openjdk-11-jdk -y
+    sudo apt install openjdk-17-jdk -y
     wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip
     unzip gradle-${GRADLE_VERSION}-bin.zip
     mv gradle-${GRADLE_VERSION} /opt/gradle-${GRADLE_VERSION}

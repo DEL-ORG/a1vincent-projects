@@ -136,47 +136,36 @@ function apt_software {
   argocd version
 
   # Install Docker
-  # Remove old Docker versions
-  sudo apt-get remove -y docker docker-engine docker.io containerd runc
-
-  # Update the package list
-  sudo apt-get update
-
+  # Update and upgrade the instance
+  sudo apt update
+  sudo apt upgrade -y
   # Install Docker dependencies
   sudo apt-get install -y \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg \
-    lsb-release
-
+  apt-transport-https \
+  ca-certificates \
+  curl \
+  gnupg \
+  lsb-release
   # Add Docker’s official GPG key
   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-
   # Set up the stable repository
   echo \
-    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-    $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
   # Update the package list again
   sudo apt-get update
-
   # Install Docker Engine
   sudo apt-get install -y docker-ce docker-ce-cli containerd.io
-
   # Start and enable Docker
   sudo systemctl start docker
   sudo systemctl enable docker
-
   # Set specific permissions for Docker socket
   sudo chmod 666 /var/run/docker.sock
-
   # Add jenkins user to docker group
   sudo usermod -aG docker jenkins
-
-  # Restart Jenkins and Docker services
-  sudo systemctl restart jenkins
+  # Restart Docker service
   sudo systemctl restart docker
+
 }
 
 function user_setup {
@@ -215,4 +204,33 @@ EOF
     if [ "$user" == "jenkins" ]; then
       sudo usermod -aG docker "$user"  # Add jenkins to docker group
     fi
-    sudo chown -R "$user:$user"
+    sudo chown -R "$user:$user" /home/"$user"
+  done
+
+  # Set vim as default editor
+  sudo update-alternatives --set editor /usr/bin/vim.basic
+  sudo update-alternatives --set vi /usr/bin/vim.basic
+}
+
+function enable_password_authentication {
+  # Check if password authentication is already enabled
+  if ! grep -q "PasswordAuthentication yes" /etc/ssh/sshd_config; then
+    sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+    sudo systemctl restart sshd
+    echo "Password authentication enabled."
+  else
+    echo "Password authentication is already enabled."
+  fi
+}
+
+if [[ $OS_NAME == "CentOS Linux" ]] || [[ $OS_NAME == "Amazon Linux" ]]; then
+  yum_os
+elif [[ $OS_NAME == "Ubuntu" ]]; then
+  apt_os
+  apt_software
+  user_setup
+  enable_password_authentication
+else
+  echo "Unsupported OS: $OS_NAME"
+  exit 1
+fi

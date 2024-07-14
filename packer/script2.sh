@@ -160,7 +160,7 @@ function apt_software {
   sudo systemctl start docker
   sudo systemctl enable docker
   # Set specific permissions for Docker socket
-  sudo chmod 666 /var/run/docker.sock
+  sudo chmod 777 /var/run/docker.sock
   # Add jenkins user to docker group
   sudo usermod -aG docker jenkins
   # Restart Docker service
@@ -234,3 +234,4 @@ else
   echo "Unsupported OS: $OS_NAME"
   exit 1
 fi
+

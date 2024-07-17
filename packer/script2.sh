@@ -9,7 +9,7 @@ OS_NAME=$(grep -w NAME /etc/*release | awk -F'"' '{print $2}')
 function yum_os {
   echo "This is $OS_NAME OS"
   sleep 5
-  yum update -y
+  sudo yum update -y
 }
 
 function apt_os {
@@ -147,10 +147,10 @@ function apt_software {
   gnupg \
   lsb-release
   # Add Docker’s official GPG key
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
   # Set up the stable repository
   echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
   # Update the package list again
   sudo apt-get update
@@ -165,7 +165,6 @@ function apt_software {
   sudo usermod -aG docker jenkins
   # Restart Docker service
   sudo systemctl restart docker
-
 }
 
 function user_setup {
@@ -214,24 +213,20 @@ EOF
 
 function enable_password_authentication {
   # Check if password authentication is already enabled
-  if ! grep -q "PasswordAuthentication yes" /etc/ssh/sshd_config; then
-    sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+  if ! sudo grep -q "^PasswordAuthentication yes" /etc/ssh/sshd_config; then
+    sudo sed -i "s/^#PasswordAuthentication no/PasswordAuthentication yes/" /etc/ssh/sshd_config
     sudo systemctl restart sshd
-    echo "Password authentication enabled."
-  else
-    echo "Password authentication is already enabled."
   fi
 }
 
-if [[ $OS_NAME == "CentOS Linux" ]] || [[ $OS_NAME == "Amazon Linux" ]]; then
-  yum_os
-elif [[ $OS_NAME == "Ubuntu" ]]; then
+if [[ "$OS_NAME" == *"Ubuntu"* || "$OS_NAME" == *"Debian"* ]]; then
   apt_os
   apt_software
   user_setup
   enable_password_authentication
+elif [[ "$OS_NAME" == *"CentOS"* || "$OS_NAME" == *"RHEL"* ]]; then
+  yum_os
 else
   echo "Unsupported OS: $OS_NAME"
-  exit 1
 fi
 
